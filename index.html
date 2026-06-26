@@ -1,0 +1,2545 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>11 允溱有限公司 Premium K-Beauty</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+    
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .font-serif {
+      font-family: 'Playfair Display', 'Noto Sans TC', serif;
+    }
+    
+    /* 漸變與微動畫效果 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.35s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50/50 text-slate-800 selection:bg-pink-100 selection:text-pink-950 min-h-screen">
+
+  <!-- 總包覆容器 -->
+  <div id="app"></div>
+
+  <script>
+    // ==========================================
+    // 1. 初始化資料庫與靜態常數 (全部更新為 11 允溱有限公司 專屬檔名)
+    // ==========================================
+    const CURATED_PRODUCTS = [
+      {
+        id: 'p1',
+        name: 'Torriden 微分子超導玻尿酸保濕精華液 (DIVE-IN Serum)',
+        brand: 'Torriden',
+        category: 'Skincare',
+        price: 680,
+        origin: '韓國 首爾',
+        capacity: '50ml',
+        skinType: '敏弱肌 / 乾性肌 / 混合性肌膚',
+        highlights: '極速深層補水、修護肌膚乾燥屏障、質地清爽不黏膩、維持全天候爆水光澤。',
+        ingredients: '5重微分子玻尿酸、積雪草萃取物、維他命B5 (泛醇)、孔雀石萃取液',
+        imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Torriden_DiveIn_Report.txt',
+        rating: 4.8,
+        reviews: 312,
+        pH: "5.5 (弱酸性)",
+        snurcId: "SNU-2026-T8812",
+        clinicalResult: "經 50 名受試者進行 24 小時貼片測試，無任何紅腫與過敏刺激反應，保濕度提升 148%。"
+      },
+      {
+        id: 'p2',
+        name: 'Round Lab 獨島 白樺樹高效深層鎖水面霜',
+        brand: 'Round Lab',
+        category: 'Skincare',
+        price: 780,
+        origin: '韓國 江原道',
+        capacity: '80ml',
+        skinType: '中性肌 / 乾性肌 / 脫皮受損肌',
+        highlights: '富含天然白樺樹汁、專利微囊保濕科技、深層鎖水不厚重、修護乾燥起皮。',
+        ingredients: '白樺樹汁、複合神經醯胺NP、角鯊烷、白樺茸多醣體',
+        imageUrl: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_RoundLab_Birch_Cream.txt',
+        rating: 4.7,
+        reviews: 185,
+        pH: "5.8 (溫和親膚)",
+        snurcId: "SNU-2026-R9054",
+        clinicalResult: "白樺樹天然活性多醣體能有效在表皮層形成全天候鎖水網，12小時鎖水率達 92.4%。"
+      },
+      {
+        id: 'p3',
+        name: 'Anua 雅諾雅 77% 魚腥草毛孔收斂急救舒緩爽膚水',
+        brand: 'Anua',
+        category: 'Skincare',
+        price: 590,
+        origin: '韓國 濟州島',
+        capacity: '250ml',
+        skinType: '痘痘粉刺肌 / 敏感泛紅肌 / 混合偏油肌',
+        highlights: '77%高濃度韓國魚腥草、強效退紅消粉刺、溫和調理角質、收斂粗大毛孔。',
+        ingredients: '77%魚腥草萃取、馬齒莧精華、積雪草、甘草酸二鉀',
+        imageUrl: 'https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Anua_77_Heartleaf_Toner.txt',
+        rating: 4.6,
+        reviews: 420,
+        pH: "5.2 (毛孔調理收斂)",
+        snurcId: "SNU-2026-A1042",
+        clinicalResult: "針對痘痘粉刺性肌膚試驗，使用 4 週後皮脂分泌量減少 31%，皮膚泛紅程度顯著退紅。"
+      },
+      {
+        id: 'p4',
+        name: 'Aestura Atobarrier 365 專利神經醯胺屏障修護乳霜',
+        brand: 'Aestura',
+        category: 'Skincare',
+        price: 880,
+        origin: '韓國 首爾',
+        capacity: '80ml',
+        skinType: '極乾性肌 / 敏弱肌 / 醫美術後修護',
+        highlights: '專利微顆粒神經醯胺、極致親膚好吸收、迅速建立防禦屏障、長效100小時鎖水。',
+        ingredients: '專利神經醯胺NP、亮顏維他命E、植物鞘氨醇、甘油脂質',
+        imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Aestura_365_Barrier_Report.txt',
+        rating: 4.9,
+        reviews: 294,
+        pH: "6.0 (屏障生理pH值)",
+        snurcId: "SNU-2026-AE321",
+        clinicalResult: "專利微囊神經醯胺顆粒與表皮脂質結構 100% 契合，醫美術後肌膚屏障修護速度提升 2.5 倍。"
+      },
+      {
+        id: 'p5',
+        name: 'CLIO 珂莉奧 殺手氣墊粉餅 (Kill Cover Mesh Glow Cushion)',
+        brand: 'CLIO',
+        category: 'Makeup',
+        price: 890,
+        origin: '韓國 首爾',
+        capacity: '15g x 2',
+        skinType: '乾性肌 / 混合性肌膚 / 追求水光感妝效',
+        highlights: '網格濾鏡超細粉質、打造韓系奶油微光肌、長效持妝不暗沉、高遮瑕極輕薄。',
+        ingredients: '洋甘菊花水、積雪草精粹、D-泛醇、透明質酸鈉',
+        imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Clio_Mesh_Glow_Specs.txt',
+        rating: 4.7,
+        reviews: 265,
+        pH: "N/A (化妝品)",
+        snurcId: "SNU-2026-C4402",
+        clinicalResult: "24小時長效鎖光防暗沉實驗：在氣溫 28 度的潮濕環境下，持妝度高達 94%，未見斑駁結塊。"
+      },
+      {
+        id: 'p6',
+        name: 'rom&nd 玻璃水光亮澤豐唇唇釉 (Juicy Lasting Tint)',
+        brand: 'rom&nd',
+        category: 'Makeup',
+        price: 360,
+        origin: '韓國 首爾',
+        capacity: '5.5g',
+        skinType: '所有膚質適用',
+        highlights: '打造日雜感啵啵水透嘟嘟唇、不沾杯持久鎖色技術、果汁般透亮滋潤。',
+        ingredients: '荷荷巴籽油、亮顏維他命E、甜杏仁提取物、椰子油',
+        imageUrl: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Romand_Tint_Ingredients.txt',
+        rating: 4.8,
+        reviews: 580,
+        pH: "N/A (化妝品)",
+        snurcId: "SNU-2026-R8890",
+        clinicalResult: "水分與植物油雙重包裹配方，能在唇部表面形成高密度反光折射膜，持水保濕率達 6 小時。"
+      },
+      {
+        id: 'p7',
+        name: 'fwee 柔焦霧面布丁唇頰兩用慕斯泥 (Pudding Pot)',
+        brand: 'fwee',
+        category: 'Makeup',
+        price: 480,
+        origin: '韓國 首爾',
+        capacity: '5g',
+        skinType: '所有膚質適用',
+        highlights: '全新布丁慕斯質地、唇頰兩用自然膨潤、柔焦霧化唇紋、呈現透白好氣色。',
+        ingredients: '澳洲堅果油、高嶺土、有機椰子油、亮顏維他命C',
+        imageUrl: 'https://images.unsplash.com/photo-1625093742435-6fa192b6fb10?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Fwee_Pudding_Pot_Safety.txt',
+        rating: 4.5,
+        reviews: 142,
+        pH: "N/A (化妝品)",
+        snurcId: "SNU-2026-F1102",
+        clinicalResult: "使用植物天然高分子與柔焦雲母粉，經測試不堵塞面部毛孔，唇頰兩用，顯色度親膚自然。"
+      },
+      {
+        id: 'p8',
+        name: 'peripera 尺子十色極致氛圍眼影盤 (All Take Mood)',
+        brand: 'peripera',
+        category: 'Makeup',
+        price: 520,
+        origin: '韓國 首爾',
+        capacity: '6.8g',
+        skinType: '所有膚質適用',
+        highlights: '高實用十色漸層、一盤搞定眼影打底/亮片/腮紅、粉質細緻服貼不飛粉。',
+        ingredients: '高密度雲母粉、澳洲堅果油、維命E、二氧化鈦',
+        imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=600&auto=format&fit=crop', 
+        pdfName: '11_YunZhen_Peripera_Palette_Specs.txt',
+        rating: 4.6,
+        reviews: 198,
+        pH: "N/A (化妝品)",
+        snurcId: "SNU-2026-P3319",
+        clinicalResult: "經敏感性眼部肌膚貼片測試，無任何飛粉刺激或結膜充血不適反應，卸妝容易無殘留。"
+      }
+    ];
+
+    const INITIAL_USERS = [
+      {
+        id: 'u1',
+        name: '林志玲',
+        email: 'chiling@example.com',
+        phone: '0912-345-678',
+        registeredAt: '2026/05/12',
+        notes: '黃金VIP，偏好保濕精華液與頂級彩妝'
+      }
+    ];
+
+    const INITIAL_ORDERS = [
+      {
+        orderId: 'KB-882194',
+        customer: {
+          name: '林志玲',
+          email: 'chiling@example.com',
+          phone: '0912-345-678'
+        },
+        items: [
+          { id: 'p1', name: 'Torriden 微分子超導玻尿酸保濕精華液', brand: 'Torriden', price: 680, quantity: 1, capacity: '50ml' }
+        ],
+        total: 680,
+        paymentStatus: 'paid',
+        orderDate: '2026/06/10',
+        paymentDeadline: '2026/06/17',
+        agencyName: '11 允溱有限公司 合作美妝窗口 (台北總公司)',
+        agencyAddress: '台北市大安區忠孝東路四段 888 號 12 樓'
+      }
+    ];
+
+    // ==========================================
+    // 2. 原生 App 狀態引擎 (100% 響應式儲存)
+    // ==========================================
+    const state = {
+      currentView: 'storefront', // 'storefront' | 'admin'
+      adminTab: 'products',     // 'products' | 'users' | 'orders'
+      
+      products: JSON.parse(localStorage.getItem('celune_db_products_v5')) || CURATED_PRODUCTS,
+      users: JSON.parse(localStorage.getItem('celune_db_users_v5')) || INITIAL_USERS,
+      orders: JSON.parse(localStorage.getItem('celune_db_orders_v5')) || INITIAL_ORDERS,
+      cart: JSON.parse(localStorage.getItem('celune_cart_v5')) || [],
+      currentUser: JSON.parse(localStorage.getItem('celune_user_v5')) || null,
+
+      selectedBrand: 'All',
+      selectedSkinType: 'All',
+      selectedCategory: 'All',
+      searchQuery: '',
+      
+      // 控制彈窗與特定檢視
+      activeProduct: null,
+      activePdf: null,
+      pdfZoom: 100,
+      
+      isCartOpen: false,
+      isAuthModalOpen: false,
+      authMode: 'login', // 'login' | 'register'
+      authForm: { name: '', email: '', phone: '', password: '' },
+
+      lastOrder: null,
+      isCheckoutSuccess: false,
+
+      // 自訂對話框
+      customConfirm: null,
+      customAlert: null,
+      toastMessage: null,
+
+      // 後台資料操作暫存
+      isProductModalOpen: false,
+      editingProduct: null,
+      productForm: {
+        name: '', brand: '', category: 'Skincare', price: '', origin: '', capacity: '', 
+        skinType: '', highlights: '', ingredients: '', imageUrl: '', pdfName: '', pH: '5.5', snurcId: '', clinicalResult: ''
+      },
+
+      isUserModalOpen: false,
+      editingUser: null,
+      userForm: { name: '', email: '', phone: '', notes: '' },
+      selectedAdminOrder: null
+    };
+
+    // ==========================================
+    // 3. 狀態同步、儲存與 Toast
+    // ==========================================
+    function saveState() {
+      localStorage.setItem('celune_db_products_v5', JSON.stringify(state.products));
+      localStorage.setItem('celune_db_users_v5', JSON.stringify(state.users));
+      localStorage.setItem('celune_db_orders_v5', JSON.stringify(state.orders));
+      localStorage.setItem('celune_cart_v5', JSON.stringify(state.cart));
+      if (state.currentUser) {
+        localStorage.setItem('celune_user_v5', JSON.stringify(state.currentUser));
+      } else {
+        localStorage.removeItem('celune_user_v5');
+      }
+    }
+
+    function showToast(msg) {
+      state.toastMessage = msg;
+      render();
+      setTimeout(() => {
+        state.toastMessage = null;
+        render();
+      }, 2500);
+    }
+
+    // ==========================================
+    // 4. 工具函數 (下載、列印、計算)
+    // ==========================================
+    function handleDownloadTxt(pdfData) {
+      if (!pdfData) {
+        showToast("❌ 找不到說明書資訊！");
+        return;
+      }
+      showToast("💾 正在準備官方產品成分與說明書文字檔 (.txt)...");
+      
+      const textContent = `========================================
+   11 允溱有限公司 - 官方產品成分與說明書
+========================================
+【產品名稱】：${pdfData.productName}
+【官方品牌】：${pdfData.brand}
+【產品產地】：${pdfData.origin}
+【產品容量】：${pdfData.capacity}
+【適用膚質】：${pdfData.skinType || '所有膚質適用'}
+【主要成分】：${pdfData.ingredients}
+【產品亮點】：${pdfData.highlights}
+
+本文件為官方認證產品成分說明書，如需專人諮詢請攜帶此文件至現場門市。`;
+
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const txtFileName = (pdfData.name || 'YunZhen_Report.pdf').replace('.pdf', '') + '_說明書.txt';
+      link.download = txtFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast("✅ 產品說明書文字檔 (.txt) 下載成功！");
+    }
+
+    function handlePrintContent(elementId) {
+      const element = document.getElementById(elementId);
+      if (!element) {
+        showToast("❌ 找不到列印內容。");
+        return;
+      }
+      
+      showToast("🖨️ 正在啟動安全列印沙盒...");
+
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.right = '0';
+      iframe.style.bottom = '0';
+      iframe.style.width = '0';
+      iframe.style.height = '0';
+      iframe.style.border = '0';
+      document.body.appendChild(iframe);
+      
+      const doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write(`
+        <html>
+          <head>
+            <title>11 允溱有限公司 Invoice Print Sandbox</title>
+            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+            <style>
+              body { 
+                background: white !important; 
+                color: #1e293b !important; 
+                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; 
+                padding: 30px !important; 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+              }
+              @page { 
+                size: A4; 
+                margin: 15mm; 
+              }
+              button, .print\\:hidden {
+                display: none !important;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="w-full">${element.innerHTML}</div>
+            <script>
+              window.onload = function() {
+                window.focus();
+                setTimeout(function() {
+                  window.print();
+                  setTimeout(function() {
+                    window.parent.document.body.removeChild(window.frameElement);
+                  }, 500);
+                }, 300);
+              };
+            <\/script>
+          </body>
+        </html>
+      `);
+      doc.close();
+    }
+
+    // 計算相關
+    function getBrands() {
+      return ['All', ...new Set(state.products.map(p => p.brand))];
+    }
+
+    function getFilteredProducts() {
+      return state.products.filter(p => {
+        const matchBrand = state.selectedBrand === 'All' || p.brand === state.selectedBrand;
+        const matchCategory = state.selectedCategory === 'All' || p.category === state.selectedCategory;
+        const matchSkin = state.selectedSkinType === 'All' || p.skinType.includes(state.selectedSkinType) || p.skinType.includes('所有膚質');
+        const matchSearch = p.name.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                            p.brand.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                            p.ingredients.toLowerCase().includes(state.searchQuery.toLowerCase());
+        return matchBrand && matchCategory && matchSkin && matchSearch;
+      });
+    }
+
+    function getCartTotal() {
+      return state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+
+    // ==========================================
+    // 5. 互動行為 (事件處理器)
+    // ==========================================
+    window.setView = function(view) {
+      state.currentView = view;
+      render();
+    }
+
+    window.setAdminTab = function(tab) {
+      state.adminTab = tab;
+      render();
+    }
+
+    window.setSelectedCategory = function(cat) {
+      state.selectedCategory = cat;
+      render();
+    }
+
+    window.setSelectedBrand = function(brand) {
+      state.selectedBrand = brand;
+      render();
+    }
+
+    window.setSkinTypeFilter = function(skin) {
+      state.selectedSkinType = skin;
+      render();
+    }
+
+    window.handleSearch = function(el) {
+      state.searchQuery = el.value;
+      render();
+    }
+
+    window.addToCart = function(prodId) {
+      const product = state.products.find(p => p.id === prodId);
+      if (!product) return;
+      
+      const existing = state.cart.find(item => item.id === product.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        state.cart.push({ ...product, quantity: 1 });
+      }
+      showToast(`🛒 已將「${product.name.substring(0, 10)}...」放入預訂購物車`);
+      saveState();
+      render();
+    }
+
+    window.updateQuantity = function(id, amount) {
+      const item = state.cart.find(i => i.id === id);
+      if (item) {
+        item.quantity += amount;
+        if (item.quantity <= 0) {
+          state.cart = state.cart.filter(i => i.id !== id);
+        }
+      }
+      saveState();
+      render();
+    }
+
+    window.removeFromCart = function(id) {
+      state.cart = state.cart.filter(i => i.id !== id);
+      saveState();
+      render();
+    }
+
+    // 會員與登入
+    window.setAuthMode = function(mode) {
+      state.authMode = mode;
+      render();
+    }
+
+    window.openAuthModal = function() {
+      state.isAuthModalOpen = true;
+      state.authMode = 'login';
+      state.authForm = { name: '', email: '', phone: '', password: '' };
+      render();
+    }
+
+    window.closeAuthModal = function() {
+      state.isAuthModalOpen = false;
+      render();
+    }
+
+    window.handleAuthFormInput = function(field, val) {
+      state.authForm[field] = val;
+    }
+
+    window.handleAuthSubmit = function(e) {
+      e.preventDefault();
+      const form = state.authForm;
+      
+      if (state.authMode === 'register') {
+        if (!form.name || !form.email || !form.phone) {
+          showToast("❌ 請完整填寫註冊必填欄位！");
+          return;
+        }
+        const newUser = {
+          id: 'u_' + Date.now(),
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          registeredAt: new Date().toLocaleDateString('zh-TW'),
+          notes: form.email === 'janis9631@gmail.com' ? '【11 允溱有限公司 最高管理員】' : '前台快速開通會員'
+        };
+
+        if (!state.users.some(u => u.email === form.email)) {
+          state.users.unshift(newUser);
+        }
+        
+        state.currentUser = newUser;
+        state.isAuthModalOpen = false;
+        saveState();
+        
+        if (form.email === 'janis9631@gmail.com') {
+          state.customAlert = {
+            title: "🔑 管理員帳戶註冊並登入成功",
+            message: "Janis，歡迎回來！系統最上方已開啟金色「11 允溱有限公司 管理員系統」切換按鈕。"
+          };
+        } else {
+          showToast("🎉 11 允溱有限公司 會員帳號已開通並成功登入！");
+        }
+      } else {
+        if (!form.email) {
+          showToast("❌ 請輸入註冊電子郵件！");
+          return;
+        }
+
+        if (form.email === 'janis9631@gmail.com') {
+          const adminUser = {
+            id: 'admin_janis',
+            name: 'Janis (最高權限)',
+            email: 'janis9631@gmail.com',
+            phone: '0912-888-999',
+            registeredAt: '2026/06/14',
+            notes: '【11 允溱有限公司 最高管理員】'
+          };
+          if (!state.users.some(u => u.email === 'janis9631@gmail.com')) {
+            state.users.unshift(adminUser);
+          }
+          state.currentUser = adminUser;
+          state.isAuthModalOpen = false;
+          saveState();
+          state.customAlert = {
+            title: "🔑 管理員帳戶登入成功",
+            message: "Janis，歡迎回來！系統最上方已解鎖金色「11 允溱有限公司 管理員系統」專屬切換按鈕。您可以進行商品管理、會員名冊審查，以及訂單銷帳。"
+          };
+          render();
+          return;
+        }
+
+        const foundUser = state.users.find(u => u.email === form.email);
+        if (foundUser) {
+          state.currentUser = foundUser;
+          state.isAuthModalOpen = false;
+          saveState();
+          showToast(`🎉 歡迎回來，${foundUser.name}！`);
+        } else {
+          state.customAlert = {
+            title: "⚠️ 找不到此會員信箱",
+            message: "系統內尚未建立此信箱的會員資料。請切換至「註冊會員」分頁，填寫您的姓名與電話，即可一秒快速免費開通您的 11 允溱有限公司 專屬帳號！"
+          };
+        }
+      }
+      render();
+    }
+
+    window.handleQuickAdminLogin = function() {
+      state.authForm = {
+        name: 'Janis (最高權限)',
+        email: 'janis9631@gmail.com',
+        phone: '0912-888-999',
+        password: '••••••••'
+      };
+      state.authMode = 'login';
+      render();
+      setTimeout(() => {
+        const adminUser = {
+          id: 'admin_janis',
+          name: 'Janis (最高權限)',
+          email: 'janis9631@gmail.com',
+          phone: '0912-888-999',
+          registeredAt: new Date().toLocaleDateString('zh-TW'),
+          notes: '【11 允溱有限公司 最高管理員】'
+        };
+        if (!state.users.some(u => u.email === 'janis9631@gmail.com')) {
+          state.users.unshift(adminUser);
+        }
+        state.currentUser = adminUser;
+        state.isAuthModalOpen = false;
+        saveState();
+        state.customAlert = {
+          title: "🔑 管理員登入成功",
+          message: "您已成功解鎖最高管理權限。頁面頂部已啟用金色「11 允溱有限公司 管理員系統」入口按鈕，支持產品維護與訂單銷帳。"
+        };
+        render();
+      }, 100);
+    }
+
+    window.handleQuickUserLogin = function() {
+      state.authForm = {
+        name: '林志玲',
+        email: 'chiling@example.com',
+        phone: '0912-345-678',
+        password: '••••••••'
+      };
+      state.authMode = 'login';
+      render();
+      setTimeout(() => {
+        const found = state.users.find(u => u.email === 'chiling@example.com');
+        if (found) {
+          state.currentUser = found;
+        } else {
+          const dummy = { id: 'u1', name: '林志玲', email: 'chiling@example.com', phone: '0912-345-678', registeredAt: '2026/05/12', notes: '黃金VIP' };
+          state.users.unshift(dummy);
+          state.currentUser = dummy;
+        }
+        state.isAuthModalOpen = false;
+        saveState();
+        showToast("🎉 已成功快速登入為「林志玲」會員！");
+        render();
+      }, 100);
+    }
+
+    window.handleLogout = function() {
+      state.currentUser = null;
+      state.cart = [];
+      state.currentView = 'storefront';
+      saveState();
+      showToast("👋 您已安全登出 11 允溱有限公司");
+      render();
+    }
+
+    window.handleCheckout = function() {
+      if (!state.currentUser) {
+        state.authMode = 'register';
+        state.isAuthModalOpen = true;
+        render();
+        return;
+      }
+      if (state.cart.length === 0) return;
+
+      const orderId = 'KB-' + Math.floor(100000 + Math.random() * 900000);
+      const orderData = {
+        orderId,
+        customer: state.currentUser,
+        items: [...state.cart],
+        total: getCartTotal(),
+        paymentStatus: 'pending',
+        orderDate: new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }),
+        paymentDeadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' }),
+        agencyName: '11 允溱有限公司 合作美妝窗口 (台北總公司)',
+        agencyAddress: '台北市大安區忠孝東路四段 888 號 12 樓'
+      };
+
+      state.orders.unshift(orderData);
+      state.lastOrder = orderData;
+      state.isCheckoutSuccess = true;
+      state.cart = [];
+      state.isCartOpen = false;
+      saveState();
+      showToast("📝 預訂單已成功送出！請開啟確認信進行列印。");
+      render();
+    }
+
+    // ==========================================
+    // 6. 管理者後台事件與 MODAL
+    // ==========================================
+    window.openAddProductModal = function() {
+      state.editingProduct = null;
+      state.productForm = {
+        name: '', brand: '', category: 'Skincare', price: '', origin: '韓國 首爾', capacity: '50ml', 
+        skinType: '所有膚質適用', highlights: '', ingredients: '', imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=600&auto=format&fit=crop', pdfName: '',
+        pH: '5.5', snurcId: 'SNU-2026-X' + Math.floor(1000 + Math.random() * 9000), clinicalResult: '經受試者皮膚貼片測試，無任何過敏反應。'
+      };
+      state.isProductModalOpen = true;
+      render();
+    }
+
+    window.openEditProductModal = function(id) {
+      const prod = state.products.find(p => p.id === id);
+      if (!prod) return;
+      state.editingProduct = prod;
+      state.productForm = { ...prod };
+      state.isProductModalOpen = true;
+      render();
+    }
+
+    window.handleProductFormInput = function(field, val) {
+      state.productForm[field] = val;
+    }
+
+    window.handleProductSubmit = function(e) {
+      e.preventDefault();
+      const form = state.productForm;
+      if (!form.name || !form.brand || !form.price) {
+        showToast("⚠️ 請填寫商品名稱、品牌與價格！");
+        return;
+      }
+
+      if (state.editingProduct) {
+        state.products = state.products.map(p => p.id === state.editingProduct.id ? { ...p, ...form, price: Number(form.price) } : p);
+        showToast(`✏️ 商品「${form.name.substring(0, 10)}」已成功更新`);
+      } else {
+        const newProduct = {
+          ...form,
+          id: 'p_' + Date.now(),
+          price: Number(form.price),
+          rating: 5.0,
+          reviews: 0
+        };
+        state.products.unshift(newProduct);
+        showToast(`✨ 新商品「${form.name.substring(0, 10)}」上架成功！`);
+      }
+      state.isProductModalOpen = false;
+      saveState();
+      render();
+    }
+
+    window.handleDeleteProduct = function(id) {
+      state.customConfirm = {
+        message: "確定要下架此熱賣商品嗎？下架後前台將無法看見此商品。",
+        onConfirm: () => {
+          state.products = state.products.filter(p => p.id !== id);
+          showToast("🗑️ 商品已下架成功");
+          state.customConfirm = null;
+          saveState();
+          render();
+        },
+        onCancel: () => {
+          state.customConfirm = null;
+          render();
+        }
+      };
+      render();
+    }
+
+    window.handleResetToCuratedProducts = function() {
+      state.customConfirm = {
+        message: "確定要重置並重新載入 8 款 Olive Young 的正韓美妝熱銷系列商品嗎？這將會覆蓋您目前的修改。",
+        onConfirm: () => {
+          state.products = CURATED_PRODUCTS;
+          showToast("⚡ 已重置並恢復 Olive Young 真實彩妝保養清單！");
+          state.customConfirm = null;
+          saveState();
+          render();
+        },
+        onCancel: () => {
+          state.customConfirm = null;
+          render();
+        }
+      };
+      render();
+    }
+
+    window.openAddUserModal = function() {
+      state.editingUser = null;
+      state.userForm = { name: '', email: '', phone: '', notes: '' };
+      state.isUserModalOpen = true;
+      render();
+    }
+
+    window.openEditUserModal = function(id) {
+      const u = state.users.find(item => item.id === id);
+      if (!u) return;
+      state.editingUser = u;
+      state.userForm = { ...u };
+      state.isUserModalOpen = true;
+      render();
+    }
+
+    window.handleUserFormInput = function(field, val) {
+      state.userForm[field] = val;
+    }
+
+    window.handleUserSubmit = function(e) {
+      e.preventDefault();
+      const form = state.userForm;
+      if (!form.name || !form.email || !form.phone) {
+        showToast("⚠️ 請填寫會員姓名、信箱與電話！");
+        return;
+      }
+
+      if (state.editingUser) {
+        state.users = state.users.map(u => u.id === state.editingUser.id ? { ...u, ...form } : u);
+        showToast(`👤 會員「${form.name}」資料修改成功`);
+      } else {
+        const newUser = {
+          ...form,
+          id: 'u_' + Date.now(),
+          registeredAt: new Date().toLocaleDateString('zh-TW')
+        };
+        state.users.unshift(newUser);
+        showToast(`👤 成功手動新增會員「${form.name}」`);
+      }
+      state.isUserModalOpen = false;
+      saveState();
+      render();
+    }
+
+    window.handleDeleteUser = function(id) {
+      state.customConfirm = {
+        message: "確定要註銷此會員帳號嗎？註銷後該用戶的所有預訂資訊與登入紀錄將被抹除。",
+        onConfirm: () => {
+          state.users = state.users.filter(u => u.id !== id);
+          showToast("🗑️ 會員已成功註銷");
+          state.customConfirm = null;
+          saveState();
+          render();
+        },
+        onCancel: () => {
+          state.customConfirm = null;
+          render();
+        }
+      };
+      render();
+    }
+
+    window.togglePaymentStatus = function(orderId) {
+      state.orders = state.orders.map(o => {
+        if (o.orderId === orderId) {
+          const nextStatus = o.paymentStatus === 'paid' ? 'pending' : 'paid';
+          showToast(`💳 訂單 ${orderId} 已變更為 ${nextStatus === 'paid' ? '【已付清】' : '【未付清】'}`);
+          return { ...o, paymentStatus: nextStatus };
+        }
+        return o;
+      });
+      saveState();
+      render();
+    }
+
+    window.handleSimulateUpload = function() {
+      showToast("📤 正在上傳文件至 11 允溱有限公司 雲端伺服器...");
+      setTimeout(() => {
+        state.productForm.pdfName = state.productForm.brand + '_Clinical_Report_' + Math.floor(100 + Math.random() * 900) + '.txt';
+        showToast("✅ 臨床成分分析文字檔上傳成功！");
+        render();
+      }, 1200);
+    }
+
+    window.setActiveProduct = function(id) {
+      state.activeProduct = state.products.find(p => p.id === id) || null;
+      render();
+    }
+
+    window.setActivePdf = function(pdfObj) {
+      state.activePdf = pdfObj;
+      state.pdfZoom = 100;
+      render();
+    }
+
+    // ==========================================
+    // 7. HTML 模板與元件渲染引擎 (確保每頁皆有公司名稱)
+    // ==========================================
+    function render() {
+      const appEl = document.getElementById('app');
+      let html = '';
+
+      // --- 👑 Top Admin Bar ---
+      if (state.currentUser?.email === 'janis9631@gmail.com') {
+        html += `
+          <div class="bg-amber-900 text-amber-50 px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm font-medium border-b border-amber-950 sticky top-0 z-50 shadow-md print:hidden">
+            <div class="flex items-center gap-2">
+              <span class="bg-amber-500 text-amber-950 text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border border-amber-400">
+                11 允溱有限公司 最高權限
+              </span>
+              <span class="hidden sm:inline text-amber-100">管理員登入中：${state.currentUser.email}</span>
+            </div>
+            <div class="flex gap-2">
+              <button 
+                onClick="setView('storefront')"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+                  state.currentView === 'storefront' 
+                    ? 'bg-white text-amber-950 font-bold shadow' 
+                    : 'hover:bg-amber-800 text-amber-100'
+                }"
+              >
+                <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                <span>11 允溱有限公司 前台購物網</span>
+              </button>
+              <button 
+                onClick="setView('admin')"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+                  state.currentView === 'admin' 
+                    ? 'bg-white text-amber-950 font-bold shadow' 
+                    : 'hover:bg-amber-800 text-amber-100'
+                }"
+              >
+                <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                <span>管理員後端系統</span>
+                ${state.orders.filter(o => o.paymentStatus === 'pending').length > 0 ? `
+                  <span class="bg-rose-500 text-white font-bold px-1.5 py-0.2 rounded-full text-[9px]">
+                    ${state.orders.filter(o => o.paymentStatus === 'pending').length}
+                  </span>
+                ` : ''}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // ==========================================
+      // A. 前台視野 (STOREFRONT VIEW)
+      // ==========================================
+      if (state.currentView === 'storefront') {
+        const brands = getBrands();
+        const filteredProducts = getFilteredProducts();
+
+        html += `
+          <!-- Header Navigation (帶有 11 允溱有限公司 企業識別) -->
+          <header class="bg-white border-b border-slate-100 sticky top-0 z-40 print:hidden shadow-xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-pink-600 text-white rounded-full flex items-center justify-center font-serif text-xl font-black shadow-md shadow-pink-100">
+                  11
+                </div>
+                <div>
+                  <span class="text-xl font-bold tracking-wider text-pink-600 block">11 允溱有限公司</span>
+                  <span class="block text-[10px] tracking-widest text-slate-400 uppercase font-bold">PREMIUM BEAUTY SELECTION</span>
+                </div>
+              </div>
+
+              <!-- 搜尋框 -->
+              <div class="hidden md:flex items-center flex-1 max-w-lg mx-12">
+                <div class="relative w-full">
+                  <input 
+                    type="text" 
+                    placeholder="搜尋真實韓國美妝、成分、品牌..." 
+                    value="${state.searchQuery}"
+                    onInput="handleSearch(this)"
+                    class="w-full bg-slate-100/70 border-0 rounded-full py-2.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/30 focus:bg-white transition"
+                  />
+                  <i data-lucide="search" class="absolute right-4 top-3 w-4 h-4 text-slate-400"></i>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-4">
+                <!-- 購物車按鈕 -->
+                <button 
+                  onClick="state.isCartOpen = true; render();"
+                  class="relative p-2.5 bg-pink-50/50 hover:bg-pink-100/50 rounded-xl text-pink-600 transition"
+                >
+                  <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                  ${state.cart.length > 0 ? `
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-pink-600 text-white rounded-full text-[10px] font-bold flex items-center justify-center">
+                      ${state.cart.reduce((sum, item) => sum + item.quantity, 0)}
+                    </span>
+                  ` : ''}
+                </button>
+
+                <!-- 會員登入 / 個人選單 -->
+                ${state.currentUser ? `
+                  <div class="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-full py-1.5 pl-3 pr-1.5">
+                    <span class="text-xs font-semibold text-slate-700 truncate max-w-[100px]">${state.currentUser.name}</span>
+                    <span class="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold">已登入</span>
+                    <div class="relative group">
+                      <button class="w-7 h-7 rounded-full bg-pink-100 flex items-center justify-center text-pink-700 font-bold text-xs hover:bg-pink-200 transition">
+                        ${state.currentUser.name[0]}
+                      </button>
+                      <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-slate-100 hidden group-hover:block text-sm z-50">
+                        <div class="px-4 py-2 border-b border-slate-50">
+                          <p class="font-medium text-slate-800">${state.currentUser.name}</p>
+                          <p class="text-xs text-slate-400 truncate">${state.currentUser.email}</p>
+                        </div>
+                        ${state.currentUser?.email === 'janis9631@gmail.com' ? `
+                          <button 
+                            onClick="setView('admin')"
+                            class="w-full text-left px-4 py-2 text-pink-600 hover:bg-pink-50 font-semibold transition"
+                          >
+                            11 允溱管理員後端
+                          </button>
+                        ` : ''}
+                        <button 
+                          onClick="handleLogout()"
+                          class="w-full text-left px-4 py-2 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition border-t border-slate-50"
+                        >
+                          登出帳號
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ` : `
+                  <button 
+                    onClick="openAuthModal()"
+                    class="flex items-center gap-2 text-xs bg-slate-100 hover:bg-slate-200 font-bold text-slate-700 py-2.5 px-4 rounded-full transition"
+                  >
+                    <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+                    <span>會員註冊 / 登入</span>
+                  </button>
+                `}
+              </div>
+
+            </div>
+          </header>
+
+          <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- --- 結帳預訂成功收據顯示 --- -->
+            ${state.isCheckoutSuccess && state.lastOrder ? `
+              <div class="max-w-3xl mx-auto animate-fade-in">
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-500 text-white rounded-full flex items-center justify-center shrink-0">
+                      <i data-lucide="check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold">預訂成功！11 允溱有限公司 會員已開通啟用</h3>
+                      <p class="text-sm text-emerald-700">請列印下方預訂單確認信，並攜至門市現場實體付款以核銷取貨。</p>
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <button 
+                      onClick="handlePrintContent('invoice-card')"
+                      class="flex items-center gap-2 bg-stone-900 text-white hover:bg-stone-800 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition"
+                    >
+                      <i data-lucide="printer" class="w-4 h-4"></i>
+                      列印此確認信
+                    </button>
+                    <button 
+                      onClick="state.isCheckoutSuccess = false; render();"
+                      class="bg-white hover:bg-stone-100 text-stone-700 text-sm font-medium px-4 py-2 rounded-lg border border-stone-200 transition"
+                    >
+                      繼續選購
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Printable Invoice Sheet (更新為 11 允溱有限公司 公司名稱) -->
+                <div id="invoice-card" class="bg-white border-2 border-stone-200 p-8 sm:p-12 rounded-2xl shadow-md relative overflow-hidden">
+                  <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-600 via-rose-400 to-pink-700 print:hidden"></div>
+                  
+                  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-100 pb-8 mb-8">
+                    <div>
+                      <span class="text-xs font-bold text-pink-600 tracking-widest uppercase">OFFLINE RESERVATION & INVOICE</span>
+                      <h1 class="font-serif text-3xl font-semibold text-stone-900 mt-1">11 允溱有限公司 美妝代購行程預訂單</h1>
+                      <p class="text-stone-400 text-xs mt-1">請妥善保存此信件，並於付款截止日前前往以下指定地點付款。</p>
+                    </div>
+                    <div class="mt-4 sm:mt-0 text-right">
+                      <div class="inline-block bg-stone-100 text-stone-800 text-xs font-mono font-bold px-3 py-1 rounded">
+                        預訂編號：${state.lastOrder.orderId}
+                      </div>
+                      <p class="text-xs text-stone-500 mt-1">預訂日期: ${state.lastOrder.orderDate}</p>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 bg-stone-50 p-6 rounded-xl border border-stone-100">
+                    <div>
+                      <h3 class="text-xs font-bold tracking-wider uppercase text-stone-400 mb-2">預訂人資料</h3>
+                      <div class="space-y-1.5 text-sm">
+                        <p><strong class="text-stone-600">顧客姓名：</strong> ${state.lastOrder.customer.name}</p>
+                        <p><strong className="text-stone-600">電子信箱：</strong> ${state.lastOrder.customer.email}</p>
+                        <p><strong className="text-stone-600">聯絡電話：</strong> ${state.lastOrder.customer.phone}</p>
+                        <p><strong class="text-stone-600">會員狀態：</strong> <span class="inline-flex items-center gap-1 text-emerald-600 font-medium"><i data-lucide="shield-check" class="w-4 h-4"></i> 正常啟用</span></p>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="text-xs font-bold tracking-wider uppercase text-stone-400 mb-2">現場付款與核銷資訊</h3>
+                      <div class="space-y-1.5 text-sm">
+                        <p><strong class="text-stone-600">合作付款窗口：</strong> 11 允溱有限公司 合作美妝旅行社 (台北總公司)</p>
+                        <p><strong class="text-stone-600">辦公地址：</strong> 台北市大安區忠孝東路四段 888 號 12 樓</p>
+                        <p><strong class="text-stone-600">付款截止日：</strong> <span class="text-rose-600 font-semibold">${state.lastOrder.paymentDeadline}</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mb-8">
+                    <h3 class="text-sm font-semibold text-stone-900 mb-4 flex items-center gap-2">
+                      <i data-lucide="file-text" class="w-4 h-4 text-pink-600"></i>
+                      預訂商品明細
+                    </h3>
+                    <div class="border border-stone-100 rounded-xl overflow-hidden">
+                      <table class="w-full text-left text-sm">
+                        <tbody class="divide-y divide-stone-100">
+                          ${state.lastOrder.items.map((item) => `
+                            <tr>
+                              <td class="p-4">
+                                <span class="block font-medium text-stone-800">${item.name}</span>
+                                <span class="text-xs text-stone-400">${item.brand} | ${item.capacity}</span>
+                              </td>
+                              <td class="p-4 text-center text-stone-600">${item.quantity} 件</td>
+                              <td class="p-4 text-right text-stone-600">NT$ ${item.price.toLocaleString()}</td>
+                              <td class="p-4 text-right font-medium text-stone-800">NT$ ${(item.price * item.quantity).toLocaleString()}</td>
+                            </tr>
+                          `).join('')}
+                        </tbody>
+                        <tfoot class="bg-stone-50/80 font-semibold border-t border-stone-200">
+                          <tr>
+                            <td colspan="3" class="p-4 text-right text-stone-600 text-base">應付總金額：</td>
+                            <td class="p-4 text-right text-pink-600 text-xl font-serif">NT$ ${state.lastOrder.total.toLocaleString()}</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="border-t border-stone-100 pt-6 text-xs text-stone-400 space-y-2">
+                    <h4 class="font-semibold text-stone-600 text-sm">【11 允溱有限公司 條款與核銷說明】</h4>
+                    <p>1. 本預訂單成立後，我們將即刻在首爾代購庫存中為您保留 7 天。請於付款截止日前至台北指定窗口付款核銷。</p>
+                    <p>2. 至現場付款時，請務必出示此份「列印出的確認信」或手機條碼預訂單畫面供門市人員核對。</p>
+                  </div>
+                </div>
+              </div>
+            ` : `
+              <!-- 🎀 2026 TREND BEAUTY Banner (帶有公司品牌資訊) -->
+              <section class="relative bg-gradient-to-r from-pink-50/70 via-rose-50/40 to-amber-50/50 rounded-3xl overflow-hidden mb-12 border border-pink-100/30 print:hidden shadow-xs">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8 sm:p-12 items-center">
+                  <div class="lg:col-span-7 space-y-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/60 text-pink-600 text-xs font-bold tracking-wider uppercase">
+                      11 允溱有限公司 • 2026 TREND BEAUTY
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-800 leading-tight">
+                      尋找專屬於妳的<br />
+                      <span class="text-pink-600 bg-clip-text">極致韓式水光肌</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm sm:text-base leading-relaxed max-w-lg">
+                      精選韓國美妝、專櫃頂級保養。由 <strong>11 允溱有限公司</strong> 提供線上輕鬆預訂購物，並前往我們配合的實體窗口現場取貨付款，安全有保障。
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3 pt-2">
+                      <span class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white rounded-lg text-xs font-bold text-slate-600 border border-slate-100 shadow-2xs">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-500 stroke-[3]"></i> 100% 正韓檢驗
+                      </span>
+                      <span class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white rounded-lg text-xs font-bold text-slate-600 border border-slate-100 shadow-2xs">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-500 stroke-[3]"></i> 線上鎖定庫存
+                      </span>
+                      <span class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white rounded-lg text-xs font-bold text-slate-600 border border-slate-100 shadow-2xs">
+                        <i data-lucide="check" class="w-4 h-4 text-emerald-500 stroke-[3]"></i> 門市看貨最安心
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="w-full max-w-sm h-64 sm:h-72 rounded-2xl overflow-hidden shadow-xl border-4 border-white transform rotate-1 hover:rotate-0 transition duration-300 relative group">
+                      <img 
+                        src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=800&auto=format&fit=crop" 
+                        alt="11 允溱有限公司 Curated Makeup" 
+                        class="w-full h-full object-cover"
+                        onError="this.src='https://placehold.co/600x400/fecdd3/9f1239?text=11+YunZhen+K-Beauty';"
+                      />
+                      <div class="absolute bottom-4 left-4 bg-slate-900/40 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+                        11 允溱有限公司 暢銷推薦
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Filters篩選面板 -->
+              <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs mb-8 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 print:hidden">
+                <div class="flex flex-wrap items-center gap-2 text-sm">
+                  <span class="text-slate-400 font-bold mr-2 flex items-center gap-1">
+                    <i data-lucide="filter" class="w-4 h-4 text-slate-400"></i> 分類
+                  </span>
+                  <button
+                    onClick="setSelectedCategory('All'); setSelectedBrand('All');"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                      state.selectedCategory === 'All' && state.selectedBrand === 'All'
+                        ? 'bg-pink-600 text-white shadow-sm shadow-pink-100' 
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    }"
+                  >
+                    全部商品
+                  </button>
+                  <button
+                    onClick="setSelectedCategory('Skincare'); setSelectedBrand('All');"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                      state.selectedCategory === 'Skincare' && state.selectedBrand === 'All'
+                        ? 'bg-pink-600 text-white shadow-sm' 
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    }"
+                  >
+                    🧪 高效保養類
+                  </button>
+                  <button
+                    onClick="setSelectedCategory('Makeup'); setSelectedBrand('All');"
+                    class="px-4 py-1.5 rounded-lg text-xs font-bold transition ${
+                      state.selectedCategory === 'Makeup' && state.selectedBrand === 'All'
+                        ? 'bg-pink-600 text-white shadow-sm' 
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                    }"
+                  >
+                    💄 精緻彩妝類
+                  </button>
+
+                  <span class="text-slate-300 mx-2">|</span>
+                  <span class="text-slate-400 font-bold mr-2">品牌</span>
+                  ${brands.map(brand => `
+                    <button
+                      onClick="setSelectedBrand('${brand}')"
+                      class="px-3 py-1 rounded-lg text-xs font-semibold transition ${
+                        state.selectedBrand === brand 
+                          ? 'bg-pink-600 text-white shadow-sm' 
+                          : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+                      }"
+                    >
+                      ${brand === 'All' ? '全部' : brand}
+                    </button>
+                  `).join('')}
+                </div>
+
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-400">適用膚質</span>
+                    <select
+                      onchange="setSkinTypeFilter(this.value)"
+                      class="bg-slate-100 border-0 rounded-lg text-xs font-bold text-slate-600 py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
+                    >
+                      <option value="All" ${state.selectedSkinType === 'All' ? 'selected' : ''}>不限膚質</option>
+                      <option value="乾性肌" ${state.selectedSkinType === '乾性肌' ? 'selected' : ''}>乾性肌</option>
+                      <option value="中性肌" ${state.selectedSkinType === '中性肌' ? 'selected' : ''}>中性肌</option>
+                      <option value="敏感肌" ${state.selectedSkinType === '敏感肌' ? 'selected' : ''}>敏感肌</option>
+                      <option value="油性肌" ${state.selectedSkinType === '油性肌' ? 'selected' : ''}>油性肌</option>
+                      <option value="所有膚質" ${state.selectedSkinType === '所有膚質' ? 'selected' : ''}>所有膚質</option>
+                    </select>
+                  </div>
+                  
+                  <span class="text-xs font-bold text-slate-400">
+                    共找到 <span class="text-pink-600 font-bold">${filteredProducts.length}</span> 款推薦商品
+                  </span>
+                </div>
+              </div>
+
+              <!-- Product Grid -->
+              ${filteredProducts.length === 0 ? `
+                <div class="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-2xs">
+                  <i data-lucide="shopping-bag" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
+                  <p class="text-slate-500 font-bold">沒有符合篩選條件的商品</p>
+                  <button 
+                    onClick="setSelectedBrand('All'); setSelectedCategory('All'); setSkinTypeFilter('All'); handleSearch({value: ''});"
+                    class="mt-2 text-sm text-pink-600 hover:underline font-bold"
+                  >
+                    點此返回瀏覽全部
+                  </button>
+                </div>
+              ` : `
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  ${filteredProducts.map(product => `
+                    <div class="bg-white rounded-2xl border border-slate-100 hover:border-pink-200 hover:shadow-lg transition-all duration-300 group flex flex-col justify-between overflow-hidden relative">
+                      <div class="absolute top-3 left-3 z-10">
+                        <span class="bg-white/80 backdrop-blur-md border border-slate-100 text-slate-600 text-[10px] font-extrabold px-3 py-1 rounded-md shadow-2xs">
+                          ${product.brand}
+                        </span>
+                      </div>
+
+                      <div class="relative aspect-square overflow-hidden bg-slate-50">
+                        <img 
+                          src="${product.imageUrl}" 
+                          alt="${product.name}" 
+                          class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                          onError="this.src='https://placehold.co/400x400/ffe4e6/9f1239?text=${encodeURIComponent(product.brand)}';"
+                        />
+                        <span class="absolute bottom-3 left-3 text-[9px] bg-black/50 text-white px-2 py-0.5 rounded-full font-medium backdrop-blur-xs">
+                          ${product.capacity}
+                        </span>
+                      </div>
+
+                      <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                        <div class="space-y-1">
+                          <span class="text-[10px] font-extrabold text-pink-500 tracking-wider block uppercase">
+                            ${product.category === 'Skincare' ? '🧪 Premium Skincare' : '💄 Luxury Makeup'}
+                          </span>
+                          <h4 class="font-bold text-slate-700 text-sm group-hover:text-pink-600 transition line-clamp-1">
+                            ${product.name}
+                          </h4>
+                          
+                          <div class="flex items-center gap-1.5 text-xs text-amber-500">
+                            <div class="flex items-center">
+                              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 stroke-amber-400"></i>
+                              <span class="ml-1 font-bold text-slate-600 text-[11px]">${product.rating || '4.8'}</span>
+                            </div>
+                            <span class="text-slate-300">|</span>
+                            <span class="text-slate-400 text-[10px]">${product.reviews || '120'} 則現場好評</span>
+                          </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                          <div>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">預定價</span>
+                            <span class="text-base font-extrabold text-pink-600">
+                              NT$ ${product.price.toLocaleString()}
+                            </span>
+                          </div>
+                          
+                          <div class="flex gap-1">
+                            <button 
+                              onClick="setActiveProduct('${product.id}')"
+                              class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition"
+                              title="查看規格與安全報告"
+                            >
+                              <i data-lucide="info" class="w-4 h-4"></i>
+                            </button>
+                            <button 
+                              onClick="addToCart('${product.id}')"
+                              class="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1 transition shadow-sm shadow-pink-100"
+                            >
+                              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                              <span>預訂</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            `}
+
+          </main>
+        `;
+      }
+
+      // ==========================================
+      // B. 後端管理視野 (ADMIN BACKEND CONTROL CONSOLE)
+      // ==========================================
+      if (state.currentView === 'admin' && state.currentUser?.email === 'janis9631@gmail.com') {
+        html += `
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 mb-8 border-b border-stone-200">
+              <div>
+                <div class="flex items-center gap-2">
+                  <i data-lucide="settings" class="w-6 h-6 text-amber-800"></i>
+                  <h1 class="font-serif text-3xl font-semibold text-stone-900">11 允溱有限公司 管理後台</h1>
+                </div>
+                <p class="text-xs text-stone-400 mt-1">您在此處所做的商品上架、會員異動與訂單核銷，將即時同步至前台預覽中。</p>
+              </div>
+              
+              <div class="flex bg-stone-100 p-1 rounded-xl border border-stone-200 w-full md:w-auto">
+                <button 
+                  onClick="setAdminTab('products')"
+                  class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
+                    state.adminTab === 'products' ? 'bg-white text-stone-900 shadow' : 'text-stone-500 hover:text-stone-800'
+                  }"
+                >
+                  <i data-lucide="package" class="w-4 h-4"></i>
+                  <span>美妝產品維護</span>
+                </button>
+                <button 
+                  onClick="setAdminTab('users')"
+                  class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
+                    state.adminTab === 'users' ? 'bg-white text-stone-900 shadow' : 'text-stone-500 hover:text-stone-800'
+                  }"
+                >
+                  <i data-lucide="users" class="w-4 h-4"></i>
+                  <span>會員名單管理</span>
+                </button>
+                <button 
+                  onClick="setAdminTab('orders')"
+                  class="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
+                    state.adminTab === 'orders' ? 'bg-white text-stone-900 shadow' : 'text-stone-500 hover:text-stone-800'
+                  }"
+                >
+                  <i data-lucide="credit-card" class="w-4 h-4"></i>
+                  <span>訂單銷帳與結算</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- KPIs 看板 -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+                <div>
+                  <span class="text-xs font-medium text-stone-400 block">線上商品總數</span>
+                  <span class="text-3xl font-serif font-semibold text-stone-900">${state.products.length} 款</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-800">
+                  <i data-lucide="package" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+                <div>
+                  <span class="text-xs font-medium text-stone-400 block">註冊會員總數</span>
+                  <span class="text-3xl font-serif font-semibold text-stone-900">${state.users.length} 名</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-800">
+                  <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+                <div>
+                  <span class="text-xs font-medium text-stone-400 block">未清算付款訂單</span>
+                  <span class="text-3xl font-serif font-semibold text-rose-700">
+                    ${state.orders.filter(o => o.paymentStatus === 'pending').length} 筆
+                  </span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-800">
+                  <i data-lucide="credit-card" class="w-6 h-6"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 1: 產品管理 -->
+            ${state.adminTab === 'products' ? `
+              <div class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm animate-fade-in">
+                <div class="p-6 border-b border-stone-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h3 class="font-serif text-lg font-semibold text-stone-900">11 允溱有限公司 產品庫維護</h3>
+                    <p class="text-xs text-stone-400">在此手動管理您的美妝產品，包含產地、亮點、適用膚質、主要成分與成分 PDF。</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button 
+                      onClick="handleResetToCuratedProducts()"
+                      class="flex items-center gap-1.5 bg-pink-100 text-pink-700 hover:bg-pink-200 text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                    >
+                      <i data-lucide="sparkles" class="w-4 h-4"></i>
+                      <span>還原真實美妝品</span>
+                    </button>
+                    <button 
+                      onClick="openAddProductModal()"
+                      class="flex items-center gap-1.5 bg-amber-950 text-amber-50 hover:bg-amber-900 text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                    >
+                      <i data-lucide="plus" class="w-4 h-4"></i>
+                      <span>新增美妝商品</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead class="bg-stone-50 text-stone-500 text-xs tracking-wider border-b border-stone-100 uppercase">
+                      <tr>
+                        <th class="p-4">商品圖片</th>
+                        <th class="p-4">商品名稱</th>
+                        <th class="p-4">類別</th>
+                        <th class="p-4">預訂價格</th>
+                        <th class="p-4">規格 / 產地</th>
+                        <th class="p-4">適用膚質 / 成分表 TXT</th>
+                        <th class="p-4 text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                      ${state.products.map(prod => `
+                        <tr class="hover:bg-stone-50/50 transition">
+                          <td class="p-4">
+                            <div class="w-12 h-12 rounded-lg overflow-hidden border border-slate-100 shadow-2xs">
+                              <img src="${prod.imageUrl}" alt="" class="w-full h-full object-cover" />
+                            </div>
+                          </td>
+                          <td class="p-4 font-bold text-slate-700 max-w-xs truncate">
+                            <span class="block text-[10px] text-pink-600 uppercase font-semibold">${prod.brand}</span>
+                            ${prod.name}
+                          </td>
+                          <td class="p-4 text-xs font-semibold">
+                            ${prod.category === 'Skincare' ? `
+                              <span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">保養品</span>
+                            ` : `
+                              <span class="bg-pink-50 text-pink-700 px-2.5 py-1 rounded-full">彩妝類</span>
+                            `}
+                          </td>
+                          <td class="p-4 font-extrabold text-pink-600">NT$ ${prod.price.toLocaleString()}</td>
+                          <td class="p-4 text-xs text-stone-600">
+                            <p>規格: ${prod.capacity}</p>
+                            <p>產地: ${prod.origin}</p>
+                          </td>
+                          <td class="p-4 text-xs">
+                            <p class="text-stone-600 mb-1 font-bold">膚質: ${prod.skinType}</p>
+                            ${prod.pdfName ? `
+                              <button 
+                                onClick="setActivePdf({
+                                  name: '${prod.pdfName}',
+                                  productName: '${prod.name.replace(/'/g, "\\'")}',
+                                  brand: '${prod.brand}',
+                                  ingredients: '${prod.ingredients}',
+                                  highlights: '${prod.highlights}',
+                                  category: '${prod.category}',
+                                  capacity: '${prod.capacity}',
+                                  origin: '${prod.origin}',
+                                  pH: '${prod.pH || '5.5 (弱酸性)'}',
+                                  snurcId: '${prod.snurcId || 'SNU-2026-X99'}',
+                                  clinicalResult: '${prod.clinicalResult || '安全檢測通過。'}'
+                                })"
+                                class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 px-2 py-0.5 rounded text-[11px] font-medium border border-rose-100 hover:bg-rose-100 transition"
+                              >
+                                <i data-lucide="file-text" class="w-3 h-3"></i> ${prod.pdfName} (點選閱讀)
+                              </button>
+                            ` : `
+                              <span class="text-stone-400 text-[11px]">未上傳說明文件</span>
+                            `}
+                          </td>
+                          <td class="p-4">
+                            <div class="flex items-center justify-center gap-2">
+                              <button 
+                                onClick="openEditProductModal('${prod.id}')"
+                                class="p-2 text-stone-500 hover:text-amber-800 hover:bg-stone-100 rounded-lg transition"
+                              >
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                              </button>
+                              <button 
+                                onClick="handleDeleteProduct('${prod.id}')"
+                                class="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                              >
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- TAB 2: 會員管理 -->
+            ${state.adminTab === 'users' ? `
+              <div class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm animate-fade-in">
+                <div class="p-6 border-b border-stone-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h3 class="font-serif text-lg font-semibold text-stone-900">11 允溱有限公司 註冊會員管理</h3>
+                    <p class="text-xs text-stone-400">查看前台註冊開通之顧客名單，亦支持手動新增與修改其詳細資訊。</p>
+                  </div>
+                  <button 
+                    onClick="openAddUserModal()"
+                    class="flex items-center gap-1.5 bg-amber-950 text-amber-50 hover:bg-amber-900 text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                  >
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>手動新增會員</span>
+                  </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead class="bg-stone-50 text-stone-500 text-xs tracking-wider border-b border-stone-100 uppercase">
+                      <tr>
+                        <th class="p-4">會員 ID</th>
+                        <th class="p-4">真實姓名</th>
+                        <th class="p-4">電子郵件</th>
+                        <th class="p-4">聯絡電話</th>
+                        <th class="p-4">註冊時間 / 備註</th>
+                        <th class="p-4 text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                      ${state.users.map(u => `
+                        <tr class="hover:bg-stone-50/50 transition">
+                          <td class="p-4 font-mono text-xs text-stone-400">${u.id}</td>
+                          <td class="p-4 font-semibold text-stone-800">
+                            ${u.name}
+                            ${u.email === 'janis9631@gmail.com' ? `
+                              <span class="ml-1 bg-amber-100 text-amber-900 text-[9px] px-1.5 py-0.5 rounded font-bold">Admin</span>
+                            ` : ''}
+                          </td>
+                          <td class="p-4 text-stone-600 font-mono">${u.email}</td>
+                          <td class="p-4 text-stone-600">${u.phone}</td>
+                          <td class="p-4 text-xs">
+                            <p class="text-stone-500 font-mono">日期: ${u.registeredAt}</p>
+                            <p class="text-amber-800 italic mt-0.5 font-medium">備註: ${u.notes || '無'}</p>
+                          </td>
+                          <td class="p-4">
+                            <div class="flex items-center justify-center gap-2">
+                              <button 
+                                onClick="openEditUserModal('${u.id}')"
+                                class="p-2 text-stone-500 hover:text-amber-800 hover:bg-stone-100 rounded-lg transition"
+                              >
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                              </button>
+                              <button 
+                                onClick="handleDeleteUser('${u.id}')"
+                                class="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                              >
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- TAB 3: 訂單核銷 -->
+            ${state.adminTab === 'orders' ? `
+              <div class="bg-white border border-stone-200 rounded-3xl overflow-hidden shadow-sm animate-fade-in">
+                <div class="p-6 border-b border-stone-100">
+                  <h3 class="font-serif text-lg font-semibold text-stone-900">實體付款訂單核銷結算</h3>
+                  <p class="text-xs text-stone-400">在此核對顧客持 11 允溱有限公司 實體確認信前來付款的訂單。收到現場付款後，可手動切換更新付款狀態。</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead class="bg-stone-50 text-stone-500 text-xs tracking-wider border-b border-stone-100 uppercase">
+                      <tr>
+                        <th class="p-4">訂單編號</th>
+                        <th class="p-4">預訂顧客</th>
+                        <th class="p-4">預訂內容與明細</th>
+                        <th class="p-4">應付金額</th>
+                        <th class="p-4">訂單日期</th>
+                        <th class="p-4 text-center">付款狀態</th>
+                        <th class="p-4 text-center">銷帳管理</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                      ${state.orders.map(ord => `
+                        <tr class="hover:bg-stone-50/50 transition">
+                          <td class="p-4 font-mono text-xs font-bold text-stone-700">${ord.orderId}</td>
+                          <td class="p-4">
+                            <p class="font-medium text-stone-800">${ord.customer?.name}</p>
+                            <p class="text-xs text-slate-400">${ord.customer?.phone}</p>
+                          </td>
+                          <td class="p-4 text-xs">
+                            <ul class="list-disc list-inside text-stone-600 max-w-xs truncate space-y-0.5">
+                              ${ord.items?.map(item => `
+                                <li class="truncate">
+                                  ${item.brand}: ${item.name.split(' (')[0]} x${item.quantity}
+                                </li>
+                              `).join('')}
+                            </ul>
+                          </td>
+                          <td class="p-4 font-semibold text-stone-900">NT$ ${ord.total.toLocaleString()}</td>
+                          <td class="p-4 text-xs text-stone-500">${ord.orderDate}</td>
+                          <td class="p-4 text-center">
+                            ${ord.paymentStatus === 'paid' ? `
+                              <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-medium border border-emerald-100">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> 已付清
+                              </span>
+                            ` : `
+                              <span class="inline-flex items-center gap-1 bg-rose-50 text-rose-700 px-2.5 py-1 rounded-full text-xs font-medium border border-rose-100 animate-pulse">
+                                未付款
+                              </span>
+                            `}
+                          </td>
+                          <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                              <button 
+                                onClick="togglePaymentStatus('${ord.orderId}')"
+                                class="px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition ${
+                                  ord.paymentStatus === 'paid' 
+                                    ? 'bg-stone-100 hover:bg-stone-200 text-stone-600' 
+                                    : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                                }"
+                              >
+                                ${ord.paymentStatus === 'paid' ? '改為未付款' : '收款銷帳'}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+        `;
+      }
+
+      // --- Footer 頁尾 (每頁面必定顯露公司完整名稱) ---
+      html += `
+        <footer class="bg-slate-900 text-slate-400 py-12 mt-20 border-t border-slate-800 print:hidden">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+              <div class="md:col-span-2">
+                <span class="font-serif text-xl font-bold text-white tracking-wider block mb-2">11 允溱有限公司</span>
+                <p class="text-xs max-w-sm leading-relaxed text-slate-500">
+                  我們引進高端首爾美妝護膚技術，結合專業精緻旅程。線上預訂獲取預訂單，線下至實體窗口核對並開通。尊享首爾美容沙龍，享受最安全奢華的美妝保養服務。
+                </p>
+              </div>
+              <div>
+                <h4 class="text-white text-xs font-bold tracking-wider uppercase mb-3">線上預訂流程</h4>
+                <ul class="text-xs space-y-2 text-slate-500">
+                  <li>1. 挑選商品行程放入購物車</li>
+                  <li>2. 註冊填寫資料，帳號即刻開通</li>
+                  <li>3. 下單獲取「列印確認信」</li>
+                  <li>4. 帶確認信至實體旅行社門市付款</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="text-white text-xs font-bold tracking-wider uppercase mb-3">實體服務窗口</h4>
+                <p class="text-xs leading-relaxed text-slate-500">
+                  11 允溱有限公司 台北合作旅行社<br />
+                  地址：台北市大安區忠孝東路四段 888 號 12 樓<br />
+                  電話：02-2777-8888
+                </p>
+              </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-600">
+              <p>© 2026 11 允溱有限公司 Korean Beauty Inc. All Rights Reserved.</p>
+              <div class="flex gap-4 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-slate-400 font-semibold">隱私條款</a>
+                <a href="#" class="hover:text-slate-400 font-semibold">免責聲明</a>
+                ${state.currentUser?.email === 'janis9631@gmail.com' ? `
+                  <span class="text-pink-500 cursor-pointer font-bold" onClick="setView(state.currentView === 'storefront' ? 'admin' : 'storefront')">
+                    [切換前後端面板]
+                  </span>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </footer>
+      `;
+
+      // ==========================================
+      // C. 各種彈出視窗 (MODALS & PORTALS)
+      // ==========================================
+
+      // 1. 購物車抽屜 (Cart Slider Drawer)
+      if (state.isCartOpen) {
+        html += `
+          <div class="fixed inset-0 z-50 overflow-hidden print:hidden animate-fade-in">
+            <div class="absolute inset-0 overflow-hidden">
+              <div class="absolute inset-0 bg-stone-900/50 backdrop-blur-xs transition-opacity" onClick="state.isCartOpen = false; render();"></div>
+              <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <div class="pointer-events-auto w-screen max-w-md">
+                  <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                    
+                    <div class="flex items-start justify-between p-6 border-b border-stone-100">
+                      <h2 class="text-lg font-serif font-semibold text-stone-900 flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-pink-600"></i>
+                        11 允溱有限公司 預訂購物車
+                      </h2>
+                      <button onClick="state.isCartOpen = false; render();" class="p-1 rounded-full text-stone-400 hover:text-stone-500 hover:bg-stone-100">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                      </button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
+                      ${state.cart.length === 0 ? `
+                        <div class="text-center py-24">
+                          <i data-lucide="shopping-bag" class="w-16 h-16 text-stone-200 mx-auto mb-4"></i>
+                          <p class="text-stone-500 font-medium text-sm">您的預訂購物車目前是空的</p>
+                          <p class="text-stone-400 text-xs mt-1">快挑選一些韓國 Olive Young 的超強霸榜美妝吧！</p>
+                          <button 
+                            onClick="state.isCartOpen = false; render();"
+                            class="mt-6 inline-flex items-center gap-1.5 bg-pink-600 text-white hover:bg-pink-700 px-4 py-2 rounded-xl text-xs font-semibold transition"
+                          >
+                            探索韓國美妝 <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                          </button>
+                        </div>
+                      ` : `
+                        <div class="flow-root">
+                          <ul role="list" class="-my-6 divide-y divide-stone-100">
+                            ${state.cart.map(item => `
+                              <li class="flex py-6">
+                                <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-stone-100 bg-stone-50 flex items-center justify-center">
+                                  <img src="${item.imageUrl}" alt="" class="w-full h-full object-cover rounded-xl" />
+                                </div>
+
+                                <div class="ml-4 flex flex-1 flex-col justify-between">
+                                  <div>
+                                    <div class="flex justify-between text-sm font-medium text-stone-900">
+                                      <h3 class="line-clamp-1 font-bold">${item.name}</h3>
+                                      <p class="ml-4 text-xs font-bold text-pink-600">NT$ ${(item.price * item.quantity).toLocaleString()}</p>
+                                    </div>
+                                    <p class="mt-1 text-xs text-stone-400">${item.brand} | ${item.capacity}</p>
+                                  </div>
+                                  <div class="flex items-center justify-between text-xs mt-2">
+                                    <div class="flex items-center border border-stone-200 rounded-lg">
+                                      <button onClick="updateQuantity('${item.id}', -1)" class="px-2 py-1 hover:bg-stone-100">-</button>
+                                      <span class="px-3 py-1 font-medium">${item.quantity}</span>
+                                      <button onClick="updateQuantity('${item.id}', 1)" class="px-2 py-1 hover:bg-stone-100">+</button>
+                                    </div>
+                                    <button onClick="removeFromCart('${item.id}')" class="font-semibold text-rose-600 hover:text-rose-500">移除</button>
+                                  </div>
+                                </div>
+                              </li>
+                            `).join('')}
+                          </ul>
+                        </div>
+                      `}
+                    </div>
+
+                    ${state.cart.length > 0 ? `
+                      <div class="border-t border-stone-100 py-6 px-4 sm:px-6 bg-stone-50/50 shrink-0">
+                        <div class="flex justify-between text-base font-semibold text-stone-900 mb-4">
+                          <span>總計預訂金額</span>
+                          <span class="text-lg font-bold text-pink-600">NT$ ${getCartTotal().toLocaleString()}</span>
+                        </div>
+                        
+                        ${!state.currentUser ? `
+                          <div class="mb-4 bg-pink-50 border border-pink-100/50 rounded-xl p-3 text-xs text-pink-950">
+                            💡 偵測到您尚未登入。<strong>結帳前請先登入或註冊 11 允溱有限公司 會員</strong>，即可產生實體預訂確認信。
+                          </div>
+                        ` : ''}
+
+                        <div class="space-y-2">
+                          ${state.currentUser ? `
+                            <button
+                              onClick="handleCheckout()"
+                              class="w-full flex items-center justify-between bg-pink-600 text-white hover:bg-pink-700 p-4 rounded-xl text-sm font-semibold shadow-sm transition"
+                            >
+                              <span>確認預訂行程，產生確認信</span>
+                              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                          ` : `
+                            <button
+                              onClick="state.isCartOpen = false; openAuthModal();"
+                              class="w-full flex items-center justify-center gap-2 bg-stone-900 text-white hover:bg-stone-800 p-4 rounded-xl text-sm font-semibold shadow-sm transition"
+                            >
+                              <span>請先註冊/登入以進行結帳</span>
+                            </button>
+                          `}
+                          <button onClick="state.isCartOpen = false; render();" class="w-full text-center text-xs text-stone-400 hover:text-stone-600 py-2">
+                            繼續選購
+                          </button>
+                        </div>
+                      </div>
+                    ` : ''}
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. 自訂確認對話框 (Custom Confirm Dialog)
+      if (state.customConfirm) {
+        html += `
+          <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-fade-in print:hidden">
+            <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-stone-100 text-center">
+              <i data-lucide="alert-circle" class="w-12 h-12 text-rose-500 mx-auto mb-4"></i>
+              <h4 class="font-semibold text-stone-950 text-base mb-2">確認執行操作？</h4>
+              <p class="text-xs text-stone-500 mb-6 leading-relaxed">${state.customConfirm.message}</p>
+              <div class="flex gap-3 justify-center">
+                <button 
+                  onClick="state.customConfirm.onCancel()"
+                  class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-semibold text-xs px-4 py-2.5 rounded-xl transition"
+                >
+                  取消
+                </button>
+                <button 
+                  onClick="state.customConfirm.onConfirm()"
+                  class="bg-pink-600 hover:bg-pink-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition"
+                >
+                  確認執行
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 3. 自訂警告對話框 (Custom Alert Dialog)
+      if (state.customAlert) {
+        html += `
+          <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-fade-in print:hidden">
+            <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-100">
+              <div class="flex items-center gap-2 text-pink-600 mb-3">
+                <i data-lucide="sparkles" class="w-5 h-5 text-pink-500 animate-pulse"></i>
+                <h4 class="font-semibold text-base text-slate-800">${state.customAlert.title}</h4>
+              </div>
+              <p class="text-xs text-slate-600 mb-6 leading-relaxed bg-pink-50/20 p-4 rounded-xl border border-pink-100/30">
+                ${state.customAlert.message}
+              </p>
+              <div class="flex justify-end">
+                <button 
+                  onClick="state.customAlert = null; render();"
+                  class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-4 py-2 rounded-xl transition shadow-sm"
+                >
+                  我知道了
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 4. 前台商品詳情面板 (Product Detail Modal)
+      if (state.activeProduct) {
+        html += `
+          <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-xs print:hidden animate-fade-in">
+            <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 flex flex-col relative max-h-[92vh]">
+              
+              <div class="relative h-60 w-full bg-slate-50 overflow-hidden shrink-0 border-b border-slate-100">
+                <img 
+                  src="${state.activeProduct.imageUrl}" 
+                  alt="${state.activeProduct.name}" 
+                  class="w-full h-full object-cover"
+                  onError="this.src='https://placehold.co/600x400/ffe4e6/9f1239?text=11+YunZhen';"
+                />
+                <button 
+                  onClick="state.activeProduct = null; render();" 
+                  class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-900/60 text-white hover:bg-slate-900 flex items-center justify-center transition shadow-md"
+                >
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <div class="p-6 overflow-y-auto space-y-5 text-sm flex-1">
+                <div>
+                  <span class="inline-block bg-pink-50 text-pink-600 text-xs font-bold px-3 py-1 rounded-md border border-pink-100/30">
+                    ${state.activeProduct.brand}
+                  </span>
+                  <h3 class="font-bold text-slate-800 text-xl mt-2 leading-tight">
+                    ${state.activeProduct.name}
+                  </h3>
+                </div>
+
+                <div class="flex items-center gap-6 text-xs text-slate-500 font-bold bg-slate-50 p-3 rounded-xl border border-slate-100/50">
+                  <span class="flex items-center gap-1.5">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-pink-500"></i> 產地：${state.activeProduct.origin}
+                  </span>
+                  <span class="flex items-center gap-1.5">
+                    <i data-lucide="file-text" class="w-4 h-4 text-emerald-500"></i> 容量：${state.activeProduct.capacity}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                    <span class="block text-[11px] font-bold text-slate-400 uppercase mb-1">適用膚質</span>
+                    <p class="font-bold text-slate-700 text-xs">${state.activeProduct.skinType}</p>
+                  </div>
+                  <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                    <span class="block text-[11px] font-bold text-slate-400 uppercase mb-1">產品亮點</span>
+                    <p class="font-bold text-slate-700 text-xs leading-normal">${state.activeProduct.highlights}</p>
+                  </div>
+                </div>
+
+                <div class="space-y-1.5">
+                  <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> 主要成分表
+                  </span>
+                  <div class="bg-emerald-50/70 text-emerald-800 p-3 rounded-lg text-xs font-bold border border-emerald-100/40">
+                    ${state.activeProduct.ingredients}
+                  </div>
+                </div>
+
+                <!-- PDF/說明書卡片 -->
+                <div class="p-3 bg-white rounded-xl border border-slate-100 flex items-center justify-between shadow-3xs">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center shrink-0">
+                      <i data-lucide="file-text" class="w-5 h-5 stroke-[2.5]"></i>
+                    </div>
+                    <div class="max-w-[200px] sm:max-w-[260px] truncate text-left">
+                      <h5 class="font-bold text-slate-700 text-[11px] truncate">${state.activeProduct.pdfName || 'YunZhen_Analysis_Report.pdf'}</h5>
+                      <p class="text-slate-400 text-[10px]">11 允溱有限公司 成分分析與說明書 (TXT)</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick="setActivePdf({
+                      name: '${state.activeProduct.pdfName || 'YunZhen_Analysis_Report.pdf'}',
+                      productName: '${state.activeProduct.name.replace(/'/g, "\\'")}',
+                      brand: '${state.activeProduct.brand}',
+                      ingredients: '${state.activeProduct.ingredients}',
+                      highlights: '${state.activeProduct.highlights}',
+                      category: '${state.activeProduct.category}',
+                      capacity: '${state.activeProduct.capacity}',
+                      origin: '${state.activeProduct.origin}',
+                      pH: '${state.activeProduct.pH || '5.5 (弱酸性)'}',
+                      snurcId: '${state.activeProduct.snurcId || 'SNU-2026-X88'}',
+                      clinicalResult: '${state.activeProduct.clinicalResult || '安全檢驗通過。'}'
+                    })"
+                    class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-[10px] px-3.5 py-2 rounded-lg transition shrink-0 shadow-xs"
+                  >
+                    線上閱讀
+                  </button>
+                </div>
+              </div>
+
+              <div class="p-5 border-t border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+                <div class="text-left">
+                  <span class="text-[10px] text-slate-400 block font-bold uppercase">預定專屬價</span>
+                  <span class="text-lg font-extrabold text-pink-600">NT$ ${state.activeProduct.price.toLocaleString()}</span>
+                </div>
+                <div class="flex gap-2">
+                  <button 
+                    onClick="state.activeProduct = null; render();"
+                    class="bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 font-bold text-xs px-5 py-2.5 rounded-xl transition"
+                  >
+                    關閉
+                  </button>
+                  <button 
+                    onClick="addToCart('${state.activeProduct.id}'); state.activeProduct = null; render();"
+                    class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition shadow-sm shadow-pink-100 flex items-center gap-1.5"
+                  >
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span>立即預訂</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        `;
+      }
+
+      // 5. 線上 PDF 說明書閱讀器 (臨床報告彈窗)
+      if (state.activePdf) {
+        html += `
+          <div class="fixed inset-0 z-[150] flex items-center justify-center bg-slate-900/85 backdrop-blur-sm p-2 sm:p-4 animate-fade-in print:hidden">
+            <div class="bg-slate-800 rounded-2xl w-full max-w-4xl h-[95vh] flex flex-col shadow-2xl overflow-hidden border border-slate-700">
+              
+              <!-- PDF Toolbar -->
+              <div class="bg-slate-900 text-slate-200 px-4 py-3 flex items-center justify-between border-b border-slate-700 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <i data-lucide="file-text" class="w-5 h-5 text-red-500 shrink-0"></i>
+                  <span class="text-xs sm:text-sm font-semibold truncate text-slate-100">${state.activePdf.name.replace('.pdf', '.txt')}</span>
+                  <span class="hidden sm:inline-block bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded border border-slate-700">
+                    純文字版
+                  </span>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                  <div class="hidden md:flex items-center gap-2 border-r border-slate-700 pr-3 text-slate-400">
+                    <button onClick="state.pdfZoom = Math.max(50, state.pdfZoom - 10); render();" class="p-1 hover:text-white rounded hover:bg-slate-800 transition">
+                      <i data-lucide="zoom-out" class="w-4 h-4"></i>
+                    </button>
+                    <span class="text-xs font-mono font-bold w-10 text-center">${state.pdfZoom}%</span>
+                    <button onClick="state.pdfZoom = Math.min(150, state.pdfZoom + 10); render();" class="p-1 hover:text-white rounded hover:bg-slate-800 transition">
+                      <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                  
+                  <button 
+                    onClick="handleDownloadTxt(state.activePdf)"
+                    class="flex items-center gap-1.5 bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition"
+                    title="安全下載官方文字說明書 (.txt)"
+                  >
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>下載 TXT 說明書</span>
+                  </button>
+
+                  <button 
+                    onClick="state.activePdf = null; state.pdfZoom = 100; render();"
+                    class="p-1 hover:bg-red-500/20 hover:text-red-400 rounded transition"
+                  >
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Scrollable Document Container -->
+              <div class="flex-1 overflow-y-auto bg-slate-700 p-4 sm:p-8 flex justify-center items-start">
+                
+                <div style="transform: scale(${state.pdfZoom / 100}); transform-origin: top center; width: 100%; max-w: 794px;">
+                  
+                  <!-- 🛡️ 報告渲染核心（100% 乾淨排版） -->
+                  <div class="bg-white text-slate-800 p-8 sm:p-14 shadow-2xl rounded-xs border border-slate-200 relative overflow-hidden text-left font-mono" style="width: 100%; min-height: 1050px;">
+                    
+                    <!-- 水印 (11 允溱有限公司 水印) -->
+                    <div class="absolute top-[35%] left-[10%] opacity-[0.03] transform -rotate-45 pointer-events-none select-none">
+                      <span class="font-serif text-6xl font-black tracking-widest text-pink-600 block">11 允溱有限公司</span>
+                      <span class="font-serif text-5xl font-bold tracking-widest text-slate-800 block text-center mt-2">CONFIDENTIAL</span>
+                    </div>
+
+                    <!-- 蓋章印記 -->
+                    <div class="absolute bottom-16 right-16 w-28 h-28 border-4 border-dashed border-red-500/30 rounded-full flex flex-col items-center justify-center p-2 transform rotate-12 pointer-events-none select-none">
+                      <span class="text-[9px] font-black tracking-wider text-red-500/40 uppercase">CERTIFIED</span>
+                      <span class="text-[11px] font-extrabold text-red-500/40 my-0.5">SNU RC</span>
+                      <span class="text-[8px] font-medium text-red-500/40">2026 RESEARCH</span>
+                    </div>
+
+                    <!-- 報告頂部 -->
+                    <div class="flex justify-between items-start border-b-2 border-slate-800 pb-4 mb-8">
+                      <div class="flex items-center gap-2">
+                        <span class="font-serif font-black tracking-wider text-slate-900 text-lg">11 允溱研發實驗室</span>
+                      </div>
+                      <div class="text-right text-[10px] text-slate-400 font-mono">
+                        <p>DOC-ID: ${state.activePdf.snurcId}</p>
+                        <p>SECURITY LEVEL: SECURE / VERIFIED</p>
+                      </div>
+                    </div>
+
+                    <div class="text-center mb-10">
+                      <h2 class="font-serif text-xl font-bold tracking-wider text-slate-900 uppercase">
+                        臨床成分分析與安全性評估報告
+                      </h2>
+                      <p class="text-[11px] text-slate-500 mt-1">Clinical Safety & EWG Ingredient Hazard Rating Sheet</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-x-6 gap-y-3 text-xs mb-8 border border-slate-200 p-4 rounded-lg bg-slate-50/50">
+                      <p><strong>送驗品牌 (Brand):</strong> ${state.activePdf.brand}</p>
+                      <p><strong>樣品名稱 (Product Name):</strong> ${state.activePdf.productName}</p>
+                      <p><strong>產品容量 (Capacity):</strong> ${state.activePdf.capacity}</p>
+                      <p><strong>產品產地 (Origin):</strong> ${state.activePdf.origin}</p>
+                      <p><strong>酸鹼度測試 (pH Value):</strong> ${state.activePdf.pH}</p>
+                      <p><strong>檢測編號 (SNU-RC ID):</strong> ${state.activePdf.snurcId}</p>
+                    </div>
+
+                    <div class="mb-8">
+                      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5 mb-2">
+                        I. 臨床受試者貼片刺激測試報告 (Skin Irritation Test)
+                      </h3>
+                      <div class="bg-emerald-50 text-emerald-800 p-4 rounded-lg border border-emerald-100 text-xs leading-relaxed font-semibold">
+                        ${state.activePdf.clinicalResult}
+                      </div>
+                    </div>
+
+                    <div class="mb-8">
+                      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5 mb-4">
+                        II. EWG 綠色安全等級成分分析 (EWG Hazard Analysis)
+                      </h3>
+                      
+                      <div class="space-y-3">
+                        <div class="grid grid-cols-12 gap-2 text-[10px] font-extrabold text-slate-400 uppercase border-b border-slate-200 pb-1">
+                          <span class="col-span-4">活性成分 (Ingredient Name)</span>
+                          <span class="col-span-6">預期修護功能 (Function)</span>
+                          <span class="col-span-2 text-center">安全評級</span>
+                        </div>
+
+                        ${state.activePdf.ingredients.split('、').map((ing, i) => `
+                          <div class="grid grid-cols-12 gap-2 text-xs py-1 border-b border-slate-50 items-center">
+                            <span class="col-span-4 font-semibold text-slate-700">${ing}</span>
+                            <span class="col-span-6 text-slate-500 text-[11px]">
+                              ${i === 0 ? '強力導入保濕、瞬效修復乾癟細胞、深層滲透肌底' :
+                               i === 1 ? '舒緩鎮靜敏感泛紅狀態、提升肌膚防禦屏障' :
+                               i === 2 ? '天然抗氧化防暗沉、維持全天候水光透亮感' : '強化表皮結構，增進保濕彈性'}
+                            </span>
+                            <span class="col-span-2 text-center">
+                              <span class="inline-block bg-emerald-100 text-emerald-800 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                                EWG 1 (安全)
+                              </span>
+                            </span>
+                          </div>
+                        `).join('')}
+                      </div>
+                    </div>
+
+                    <div class="mb-10">
+                      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5 mb-2">
+                        III. 功效性證實 (Efficacy Verification)
+                      </h3>
+                      <p class="text-xs text-slate-600 leading-relaxed">
+                        根據首爾皮膚科學研究院進行之 4 週人體安全性試驗。實驗表明活性成分 <strong>${state.activePdf.ingredients.split('、')[0]}</strong> 具備極強的親膚性，測試結果證實：${state.activePdf.highlights}
+                      </p>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-8 mt-12 flex justify-between items-end text-xs text-slate-400">
+                      <div>
+                        <p>主檢驗師 (Director): Dr. Min-Woo Park</p>
+                        <p class="mt-1 font-mono text-[9px]">SEOUL NATIONAL UNIVERSITY SKIN RESEARCH CENTER</p>
+                      </div>
+                      <div class="text-right">
+                        <p class="italic font-serif text-slate-600 font-bold">Approved by 11 允溱有限公司</p>
+                        <p class="mt-1 text-[9px]">ISSUED ON: JUNE 14, 2026</p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Actions -->
+              <div class="bg-slate-900 px-6 py-4 flex justify-end gap-3 border-t border-slate-700 shrink-0">
+                <button 
+                  onClick="state.activePdf = null; state.pdfZoom = 100; render();"
+                  class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs px-5 py-2.5 rounded-xl transition"
+                >
+                  關閉文件
+                </button>
+                <button 
+                  onClick="handleDownloadTxt(state.activePdf)"
+                  class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition shadow-sm shadow-pink-900"
+                >
+                  下載 TXT 說明書
+                </button>
+              </div>
+
+            </div>
+          </div>
+        `;
+      }
+
+      // 6. 管理者：商品新增與修改彈窗
+      if (state.isProductModalOpen) {
+        html += `
+          <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs print:hidden animate-fade-in">
+            <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-stone-100 max-h-[90vh] flex flex-col">
+              <div class="p-6 border-b border-stone-50 flex justify-between items-center bg-stone-50/50">
+                <div>
+                  <span class="text-[10px] font-bold text-pink-600 tracking-wider uppercase block">11 允溱有限公司 系統</span>
+                  <h3 class="font-serif text-lg font-bold text-stone-900">${state.editingProduct ? '編輯美妝商品資訊' : '上架新韓國美妝產品'}</h3>
+                </div>
+                <button onClick="state.isProductModalOpen = false; render();" class="p-1.5 rounded-full hover:bg-stone-200 text-stone-400 hover:text-stone-600">
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <form onSubmit="handleProductSubmit(event)" class="p-6 overflow-y-auto space-y-4 text-sm flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">商品品牌 <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="text" required placeholder="例如：Torriden" value="${state.productForm.brand}"
+                      onInput="handleProductFormInput('brand', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">商品名稱 <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="text" required placeholder="例如：微分子超導玻尿酸保濕精華液" value="${state.productForm.name}"
+                      onInput="handleProductFormInput('name', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">類別 <span class="text-rose-500">*</span></label>
+                    <select 
+                      onChange="handleProductFormInput('category', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2 text-sm focus:outline-none"
+                    >
+                      <option value="Skincare" ${state.productForm.category === 'Skincare' ? 'selected' : ''}>🧪 保養類 (Skincare)</option>
+                      <option value="Makeup" ${state.productForm.category === 'Makeup' ? 'selected' : ''}>💄 彩妝類 (Makeup)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">預訂價格 (NTD) <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="number" required placeholder="例如：680" value="${state.productForm.price}"
+                      onInput="handleProductFormInput('price', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">產品容量 <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="text" required placeholder="例如：50ml" value="${state.productForm.capacity}"
+                      onInput="handleProductFormInput('capacity', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">產品產地</label>
+                    <input 
+                      type="text" placeholder="例如：韓國 首爾" value="${state.productForm.origin}"
+                      onInput="handleProductFormInput('origin', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">適用膚質</label>
+                    <input 
+                      type="text" placeholder="例如：敏感肌 / 乾性肌" value="${state.productForm.skinType}"
+                      onInput="handleProductFormInput('skinType', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">產品實體相片 URL</label>
+                    <input 
+                      type="text" placeholder="https://unsplash.com/..." value="${state.productForm.imageUrl}"
+                      onInput="handleProductFormInput('imageUrl', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-pink-500 focus:bg-white"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">產品成分表與說明書 PDF 上傳</label>
+                    <div class="flex gap-2">
+                      <input 
+                        type="text" readonly placeholder="請選擇上傳或點擊模擬按鈕" value="${state.productForm.pdfName}"
+                        class="w-full bg-stone-100 border border-stone-200 rounded-xl px-4 py-2.5 text-xs text-stone-600 outline-none"
+                      />
+                      <button 
+                        type="button"
+                        onClick="handleSimulateUpload()"
+                        class="bg-pink-50 hover:bg-pink-100 text-pink-700 text-xs font-bold px-3 py-2.5 rounded-xl border border-pink-200 flex items-center gap-1 shrink-0 transition"
+                      >
+                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> 模擬上傳
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">產品功效亮點</label>
+                  <textarea 
+                    rows="2" placeholder="產品的核心特點，例如：敏弱肌救星、極速修護..."
+                    onInput="handleProductFormInput('highlights', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                  >${state.productForm.highlights}</textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">活性成分化學分析列表</label>
+                  <textarea 
+                    rows="2" placeholder="詳細列出主要成分，例如：五重玻尿酸、積雪草萃取物、馬齒莧精華..."
+                    onInput="handleProductFormInput('ingredients', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-pink-500 focus:bg-white"
+                  >${state.productForm.ingredients}</textarea>
+                </div>
+
+                <div class="pt-4 border-t border-stone-100 flex justify-end gap-2">
+                  <button 
+                    type="button" onClick="state.isProductModalOpen = false; render();"
+                    class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs px-4 py-2.5 rounded-xl"
+                  >
+                    取消
+                  </button>
+                  <button 
+                    type="submit"
+                    class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-xs"
+                  >
+                    ${state.editingProduct ? '保存更新' : '確認上架'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        `;
+      }
+
+      // 7. 管理者：會員新增與修改彈窗
+      if (state.isUserModalOpen) {
+        html += `
+          <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs print:hidden animate-fade-in">
+            <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-100">
+              <div class="p-6 border-b border-stone-50 flex justify-between items-center bg-stone-50/50">
+                <h3 class="font-serif text-lg font-bold text-stone-900">${state.editingUser ? '修改會員資料' : '新增 11 允溱有限公司 會員'}</h3>
+                <button onClick="state.isUserModalOpen = false; render();" class="p-1.5 rounded-full hover:bg-stone-200 text-stone-400 hover:text-stone-600">
+                  <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <form onSubmit="handleUserSubmit(event)" class="p-6 space-y-4 text-sm">
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">會員姓名 <span class="text-rose-500">*</span></label>
+                  <input 
+                    type="text" required placeholder="例如：王小美" value="${state.userForm.name}"
+                    onInput="handleUserFormInput('name', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">電子信箱 <span class="text-rose-500">*</span></label>
+                  <input 
+                    type="email" required placeholder="email@example.com" value="${state.userForm.email}"
+                    onInput="handleUserFormInput('email', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">聯絡電話 <span class="text-rose-500">*</span></label>
+                  <input 
+                    type="tel" required placeholder="0912-345-678" value="${state.userForm.phone}"
+                    onInput="handleUserFormInput('phone', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-stone-500 mb-1">備註 / 標籤</label>
+                  <input 
+                    type="text" placeholder="例如：黃金VIP" value="${state.userForm.notes}"
+                    onInput="handleUserFormInput('notes', this.value)"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                  />
+                </div>
+
+                <div class="pt-4 border-t border-stone-100 flex justify-end gap-2">
+                  <button 
+                    type="button" onClick="state.isUserModalOpen = false; render();"
+                    class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold text-xs px-4 py-2.5 rounded-xl"
+                  >
+                    取消
+                  </button>
+                  <button 
+                    type="submit"
+                    class="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl"
+                  >
+                    確認保存
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        `;
+      }
+
+      // 8. 會員註冊與登入面板
+      if (state.isAuthModalOpen) {
+        html += `
+          <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs print:hidden animate-fade-in">
+            <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-stone-100">
+              
+              <div class="flex border-b border-stone-100 bg-stone-50/50">
+                <button 
+                  type="button"
+                  onClick="setAuthMode('login')"
+                  class="flex-1 py-4 text-center text-sm font-bold transition-all ${
+                    state.authMode === 'login' 
+                      ? 'text-pink-600 border-b-2 border-pink-600 bg-white' 
+                      : 'text-stone-400 hover:text-stone-600'
+                  }"
+                >
+                  🔑 會員登入
+                </button>
+                <button 
+                  type="button"
+                  onClick="setAuthMode('register')"
+                  class="flex-1 py-4 text-center text-sm font-bold transition-all ${
+                    state.authMode === 'register' 
+                      ? 'text-pink-600 border-b-2 border-pink-600 bg-white' 
+                      : 'text-stone-400 hover:text-stone-600'
+                  }"
+                >
+                  👤 註冊新會員
+                </button>
+              </div>
+
+              <div class="p-6 space-y-4 text-sm">
+                ${state.authMode === 'login' ? `
+                  <div class="space-y-2">
+                    <p class="text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-1">
+                      ⚡ 快速模擬與測試入口
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button 
+                        type="button"
+                        onClick="handleQuickAdminLogin()"
+                        class="flex items-center justify-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 font-bold py-2.5 px-3 rounded-xl text-xs border border-amber-200 transition"
+                      >
+                        <i data-lucide="settings" class="w-3.5 h-3.5 text-amber-700"></i>
+                        <span>管理員 Janis</span>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick="handleQuickUserLogin()"
+                        class="flex items-center justify-center gap-1.5 bg-pink-50 hover:bg-pink-100/70 text-pink-950 font-bold py-2.5 px-3 rounded-xl text-xs border border-pink-200 transition"
+                      >
+                        <i data-lucide="user" class="w-3.5 h-3.5 text-pink-600"></i>
+                        <span>會員 林志玲</span>
+                      </button>
+                    </div>
+                    <div class="relative flex py-2 items-center">
+                      <div class="flex-grow border-t border-stone-100"></div>
+                      <span class="flex-shrink mx-3 text-stone-300 text-[10px] uppercase font-bold tracking-wider">或手動輸入</span>
+                      <div class="flex-grow border-t border-stone-100"></div>
+                    </div>
+                  </div>
+                ` : ''}
+
+                <form onSubmit="handleAuthSubmit(event)" class="space-y-4">
+                  ${state.authMode === 'register' ? `
+                    <div>
+                      <label class="block text-xs font-semibold text-stone-500 mb-1">顧客姓名 <span class="text-rose-500">*</span></label>
+                      <input 
+                        type="text" required placeholder="範例：王小美" value="${state.authForm.name}"
+                        onInput="handleAuthFormInput('name', this.value)"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                      />
+                    </div>
+                  ` : ''}
+
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">電子信箱 <span class="text-rose-500">*</span></label>
+                    <input 
+                      type="email" required placeholder="例如：chiling@example.com" value="${state.authForm.email}"
+                      onInput="handleAuthFormInput('email', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                    />
+                  </div>
+
+                  ${state.authMode === 'register' ? `
+                    <div>
+                      <label class="block text-xs font-semibold text-stone-500 mb-1">聯絡電話 <span class="text-rose-500">*</span></label>
+                      <input 
+                        type="tel" required placeholder="0912-345-678" value="${state.authForm.phone}"
+                        onInput="handleAuthFormInput('phone', this.value)"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                      />
+                    </div>
+                  ` : ''}
+
+                  <div>
+                    <label class="block text-xs font-semibold text-stone-500 mb-1">密碼設定 (可留空)</label>
+                    <input 
+                      type="password" placeholder="請輸入登入密碼" value="${state.authForm.password}"
+                      onInput="handleAuthFormInput('password', this.value)"
+                      class="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-pink-500 focus:bg-white text-sm"
+                    />
+                  </div>
+
+                  <div class="bg-pink-50/30 p-3 rounded-xl text-stone-600 text-xs leading-normal border border-pink-100/20">
+                    ${state.authMode === 'register' ? `
+                      <span>✨ <strong>安全說明</strong>：註冊成功後系統將直接開通，並同步登入。</span>
+                    ` : `
+                      <span>💡 <strong>管理員提示</strong>：輸入 \`janis9631@gmail.com\` 將同步開啟 11 允溱有限公司 金色頂端後台。</span>
+                    `}
+                  </div>
+
+                  <div class="pt-2 flex justify-between gap-3">
+                    <button 
+                      type="button" 
+                      onClick="closeAuthModal()"
+                      class="bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold text-xs px-4 py-2.5 rounded-xl transition"
+                    >
+                      取消
+                    </button>
+                    <button 
+                      type="submit"
+                      class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-bold p-2.5 rounded-xl text-xs transition shadow-sm"
+                    >
+                      ${state.authMode === 'register' ? '註冊並一秒開通' : '登入 11 允溱有限公司 帳戶'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // 9. 全域 Toast 提醒元件
+      if (state.toastMessage) {
+        html += `
+          <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[200] bg-stone-900/90 backdrop-blur-md text-stone-100 px-6 py-3.5 rounded-full text-xs font-semibold tracking-wide shadow-xl flex items-center gap-2 animate-bounce print:hidden">
+            <div class="w-4.5 h-4.5 bg-pink-600 rounded-full flex items-center justify-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+            </div>
+            <span>${state.toastMessage}</span>
+          </div>
+        `;
+      }
+
+      // 渲染至主畫板
+      appEl.innerHTML = html;
+      
+      // 動態更新 Lucide 圖示
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // 8. 首次啟動與初始化
+    // ==========================================
+    window.onload = function() {
+      render();
+    };
+  </script>
+</body>
+</html>
